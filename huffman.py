@@ -115,8 +115,11 @@ def get_codes(tree):
     """
     # todo
     d = {}
-
+    d[tree.left.symbol] = "0"
+    d[tree.right.symbol] = "1"
     return d
+
+    # is this right?
 
 
 def number_nodes(tree):
