@@ -115,8 +115,9 @@ def get_codes(tree):
     """
     # todo
     d = {}
-    d[tree.left.symbol] = "0"
-    d[tree.right.symbol] = "1"
+    number_nodes(tree)
+    d[tree.left.symbol] = tree.left.number
+    d[tree.right.symbol] = tree.right.number
     return d
 
     # is this right?
