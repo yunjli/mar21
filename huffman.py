@@ -141,7 +141,27 @@ def number_nodes(tree):
     >>> tree.number
     2
     """
-    # todo
+        # todo
+    # count = 0
+    # if not tree:
+    #     pass
+    # else:
+    #     try:
+    #         tree.left.number = 0
+    #         tree.right.number = 1
+    #         count += tree.left.number + tree.right.number
+    #         number_nodes(tree.left)
+    #         number_nodes(tree.right)
+    #     except AttributeError:
+    #         number_nodes(tree.left)
+    #         number_nodes(tree.right)
+    #     tree.number = count
+    count = 0
+    if not tree:
+        pass
+    else:
+        count = number_nodes(tree.left) + number_nodes(tree.right) + 1
+        tree.number = count
 
 
 def avg_length(tree, freq_dict):
