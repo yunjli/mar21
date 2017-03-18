@@ -194,6 +194,13 @@ def avg_length(tree, freq_dict):
     1.9
     """
     # todo
+    total_freq = 0
+    number_of_symbols = 0
+    dict = get_codes(tree)
+    for symbol in dict:
+        total_freq += len(dict[symbol]) * freq_dict[symbol]
+        number_of_symbols += freq_dict[symbol]
+    return total_freq / number_of_symbols
 
 
 def generate_compressed(text, codes):
