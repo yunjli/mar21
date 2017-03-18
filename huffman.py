@@ -93,13 +93,15 @@ def huffman_tree(freq_dict):
     """
     # todo
     nodes = []
-    for item in freq_dict.keys():
-        nodes += [item]
-    for _ in nodes:
-        h_node = HuffmanNode(None, HuffmanNode(nodes[0]), HuffmanNode(nodes[1]))
-    return h_node
-
-    # working, but is this right?
+    for i in list(freq_dict.items()):
+        nodes.append(HuffmanNode(i[0]))
+    while len(nodes) > 1:
+        n = HuffmanNode(None)
+        n.left = nodes.pop(-1)
+        n.right = nodes.pop(-1)
+        nodes.append(n)
+        nodes.sort()
+    return nodes[0]
 
 
 def get_codes(tree):
