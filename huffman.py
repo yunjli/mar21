@@ -92,6 +92,7 @@ def huffman_tree(freq_dict):
     True
     """
     # todo
+    # do more test cases
     nodes = []
     for i in list(freq_dict.items()):
         nodes.append(HuffmanNode(i[0]))
