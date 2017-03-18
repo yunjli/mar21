@@ -117,13 +117,24 @@ def get_codes(tree):
     True
     """
     # todo
-    d = {}
-    number_nodes(tree)
-    d[tree.left.symbol] = tree.left.number
-    d[tree.right.symbol] = tree.right.number
-    return d
-
-    # is this right?
+        dict = {}
+    bit = ""
+    def generate_bits(tree, bit):
+        """
+        Generate bits in a preorder format, with adding "0" to
+        every left branch, and "1" to every right branch to dict value.
+        @param tree: a tree rooted at HuffmanNode
+        @param bit: int
+        @rtype None
+        """
+        if tree.left:
+            generate_bits(tree.left, bit + "0")
+        if tree.right:
+            generate_bits(tree.right, bit + "1")
+        if tree.is_leaf():
+            dict[tree.symbol] = bit
+    generate_bits(tree, bit)
+    return dict
 
 
 def number_nodes(tree):
