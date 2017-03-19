@@ -145,9 +145,16 @@ def huffman_tree(freq_dict):
     >>> result2 = HuffmanNode(None, HuffmanNode(2), HuffmanNode(3))
     >>> t == result1 or t == result2
     True
+    >>> freq = {3: 2, 2: 7, 9: 1}
+    >>> left = HuffmanNode(None, HuffmanNode(3), HuffmanNode(2))
+    >>> right = HuffmanNode(9)
+    >>> tree = huffman_tree(freq)
+    >>> tree == HuffmanNode(None, left, right)
+    True
     """
     # todo |start from easiest statement|
     result = HuffmanNode()
+    # useless when use while loop instead of recursion
     if freq_dict == {}:
         return result
     elif len(freq_dict) == 1:
@@ -166,7 +173,6 @@ def huffman_tree(freq_dict):
             new_list = list(freq_dict.values()) + list(internal_dict.values())
             new_list.sort()
             best = new_list[0]
-            new_list.remove(best)
             lst1 = [item for item in freq_dict.keys()
                     if freq_dict[item] == best] + \
                    [item for item in internal_dict.keys()
@@ -176,16 +182,16 @@ def huffman_tree(freq_dict):
                 freq_dict.__delitem__(lst1[0])
             else:
                 for c in internal_dict:
-                    if internal_dict[c] == lst1[0]:
-                        internal_dict.__delitem__(c)
+                    if internal_dict[c] == best:
                         for item in internal_lst:
                             if item.__repr__() == c:
                                 good_node1 = item
                                 internal_lst.remove(item)
+                internal_dict.__delitem__(good_node1.__repr__())
             # Already build the first node
             # Under the assumption, find the best paired node
-            # error:lst3 is empty
-            best2 = new_list[1]
+            new_list = list(freq_dict.values()) + list(internal_dict.values())
+            best2 = new_list[0]
             lst3 = [item for item in freq_dict.keys()
                     if freq_dict[item] == best2] + \
                    [item for item in internal_dict.keys()
@@ -195,17 +201,17 @@ def huffman_tree(freq_dict):
                 freq_dict.__delitem__(lst3[0])
             else:
                 for c in internal_dict:
-                    if internal_dict[c] == lst3[0]:
-                        internal_dict.__delitem__(c)
+                    if internal_dict[c] == best2:
                         for item in internal_lst:
                             if item.__repr__() == c:
                                 good_node2 = item
                                 internal_lst.remove(item)
+                internal_dict.__delitem__(good_node2.__repr__())
             inter_node = HuffmanNode(None, good_node1, good_node2)
             internal_dict[inter_node.__repr__()] = best + best2
             internal_lst.append(inter_node)
-        for c in internal_lst:
-            return c
+            for c in internal_lst:
+                return c
 
 
 def get_codes(tree):
@@ -286,7 +292,6 @@ def avg_length(tree, freq_dict):
     for c in freq_dict.keys():
         sum_variable += int(freq_dict[c]) * len(length_dict[c])
     return sum_variable / sum_freq
-    # STEP 2 : COMPRESS FILE
 
 
 def generate_compressed(text, codes):
