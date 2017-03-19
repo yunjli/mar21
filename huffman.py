@@ -51,6 +51,26 @@ def bits_to_byte(bits):
     return sum([int(bits[pos]) << (7 - pos)
                 for pos in range(len(bits))])
 
+# ====================
+# Helper functions for HuffmanTree
+
+def inter_lst(tree):
+    """
+    Return the list of internal nodes in postorder traversal.
+    @param tree: HuffmanNode tree
+    @rtpye: list[HuffmanNode]
+    """
+    lst = []
+    if not tree.symbol:
+        if tree.left.symbol and tree.right.symbol:
+            return[tree]
+        else:
+            if not tree.left.symbol:
+                lst += inter_lst(tree.left)
+            if not tree.right.symbol:
+                lst += inter_lst(tree.right)
+            lst.append(tree)
+            return lst
 
 # ====================
 # Functions for compression
@@ -156,26 +176,12 @@ def number_nodes(tree):
     2
     """
         # todo
-    # count = 0
-    # if not tree:
-    #     pass
-    # else:
-    #     try:
-    #         tree.left.number = 0
-    #         tree.right.number = 1
-    #         count += tree.left.number + tree.right.number
-    #         number_nodes(tree.left)
-    #         number_nodes(tree.right)
-    #     except AttributeError:
-    #         number_nodes(tree.left)
-    #         number_nodes(tree.right)
-    #     tree.number = count
-    count = 0
-    if not tree:
-        pass
-    else:
-        count = number_nodes(tree.left) + number_nodes(tree.right) + 1
-        tree.number = count
+    internal_lst = inter_lst(tree)
+    i = 0
+    while i in range(len(internal_lst)):
+        item = internal_lst[i]
+        item.number = 1
+        i += 1
 
 
 def avg_length(tree, freq_dict):
