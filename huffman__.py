@@ -145,12 +145,6 @@ def huffman_tree(freq_dict):
     >>> result2 = HuffmanNode(None, HuffmanNode(2), HuffmanNode(3))
     >>> t == result1 or t == result2
     True
-    >>> freq = {3: 2, 2: 7, 9: 1}
-    >>> left = HuffmanNode(None, HuffmanNode(3), HuffmanNode(2))
-    >>> right = HuffmanNode(9)
-    >>> tree = huffman_tree(freq)
-    >>> tree == HuffmanNode(None, left, right)
-    True
     """
     # todo |start from easiest statement|
     result = HuffmanNode()
@@ -168,7 +162,6 @@ def huffman_tree(freq_dict):
         # make sure the tree is completly built
         # Give a assumption: there are always paired nodes
         # Is it possible the bottom node is not paired?
-        # If follow the greedy algorithm-->very possible!
         while freq_dict is not None or len(internal_lst) != 1:
             new_list = list(freq_dict.values()) + list(internal_dict.values())
             new_list.sort()
@@ -419,6 +412,12 @@ def generate_tree_general(node_lst, root_index):
     @param int root_index: index in the node list
     @rtype: HuffmanNode
 
+    # NOT postorder
+    # How to create a general method to get a unique solution?
+    # Is it possible that there is a case we only have the root
+    node and one leaf?-->read node always has data value
+    # If it is a leaf-->type number is 0, type data is the symbol value
+    # If it is a internal node-->type number is 1, type data is the number value
     >>> lst = [ReadNode(0, 5, 0, 7), ReadNode(0, 10, 0, 12), \
     ReadNode(1, 1, 1, 0)]
     >>> generate_tree_general(lst, 2)
@@ -427,6 +426,30 @@ HuffmanNode(12, None, None)), \
 HuffmanNode(None, HuffmanNode(5, None, None), HuffmanNode(7, None, None)))
     """
     # todo
+    root_readnode = node_lst[root_index]
+    node_lst.remove(root_readnode)
+    if not root_readnode.l_type or not root_readnode.r_type:
+        if not root_readnode.l_type and not root_readnode.r_type:
+            left = HuffmanNode(root_readnode.l_data)
+            right = HuffmanNode(root_readnode.r_data)
+            return HuffmanNode(None, left, right)
+        else:
+            if not root_readnode.left_type:
+                left = HuffmanNode(root_readnode.l_data)
+            else:
+                left = generate_tree_general(node_lst, 0)
+            if not root_readnode.r_type:
+                right = HuffmanNode(root_readnode.l_data)
+            else:
+                right = generate_tree_general(node_lst, 0)
+            return HuffmanNode(None, left, right)
+    else:
+        right = generate_tree_general(node_lst, 0)
+        left = generate_tree_general(node_lst, 0)
+        if root_readnode.l_data > root_readnode.r_data:
+            return HuffmanNode(None, left, right)
+        else:
+            return HuffmanNode(None, right, left)
 
 
 def generate_tree_postorder(node_lst, root_index):
@@ -447,6 +470,27 @@ HuffmanNode(7, None, None)), \
 HuffmanNode(None, HuffmanNode(10, None, None), HuffmanNode(12, None, None)))
     """
     # todo
+    root_readnode = node_lst[root_index]
+    node_lst.remove(root_readnode)
+    if not root_readnode.l_type or not root_readnode.r_type:
+        if not root_readnode.l_type and not root_readnode.r_type:
+            left = HuffmanNode(root_readnode.l_data)
+            right = HuffmanNode(root_readnode.r_data)
+            return HuffmanNode(None, left, right)
+        else:
+            if not root_readnode.left_type:
+                left = HuffmanNode(root_readnode.l_data)
+            else:
+                left = generate_tree_general(node_lst, 0)
+            if not root_readnode.r_type:
+                right = HuffmanNode(root_readnode.l_data)
+            else:
+                right = generate_tree_general(node_lst, 0)
+            return HuffmanNode(None, left, right)
+    else:
+        left = generate_tree_general(node_lst, 0)
+        right = generate_tree_general(node_lst, 0)
+        return HuffmanNode(None, left, right)
 
 
 def generate_uncompressed(tree, text, size):
