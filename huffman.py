@@ -113,19 +113,18 @@ def huffman_tree(freq_dict):
     >>> freq2 = {'A': 10, 'E': 15, 'I': 12, 'S': 3, 'T': 4, 'P': 13, '/n': 1}
     >>> t2 = huffman_tree(freq2)
     >>> print(t2)
-                            /n
-                        None
                             S
+                        None
+                            n
                     None
                         T
                 None
                     A
             None
-                I
-        None
+                E
             P
-    None
-        E
+        None
+            I
     <BLANKLINE>
     >>> freq_ = {1:64, 2:13, 3:22, 4:32, 5:103}
     >>> print(huffman_tree(freq_))
