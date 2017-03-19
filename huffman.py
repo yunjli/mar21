@@ -245,6 +245,17 @@ def tree_to_bytes(tree):
     [0, 3, 0, 2, 1, 0, 0, 5]
     """
     # todo
+    if tree.is_leaf() and tree.symbol:
+        return bytes([0, tree.symbol])
+    else:
+        result = bytes([])
+        if tree.left:
+            result += tree_to_bytes(tree.left)
+        if tree.right:
+            result += tree_to_bytes(tree.right)
+    # remove last two bytes
+    result += bytes([1, tree.number])
+    return result
 
 
 def num_nodes_to_bytes(tree):
