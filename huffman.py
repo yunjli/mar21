@@ -167,9 +167,15 @@ def get_codes(tree):
     >>> d = get_codes(tree)
     >>> d == {3: "0", 2: "1"}
     True
+    >>> freq_ = {1:64, 2:13, 3:22, 4:32, 5:103}
+    >>> get_codes(huffman_tree(freq_))
+    {5: '0', 1: '10', 4: '110', 2: '1110', 3: '1111'}
+    >>> freq2 = {'A': 10, 'E': 15, 'I': 12, 'S': 3, 'T': 4, 'P': 13, '/n': 1}
+    >>> get_codes(huffman_tree(freq2))
+    {'A': 110, 'E': 10, 'I': 001, 'S': 11111, 'T': 1110, 'P': 01, '\n': 11110}
     """
     # todo
-        dict = {}
+     dict = {}
     bit = ""
     def generate_bits(tree, bit):
         """
