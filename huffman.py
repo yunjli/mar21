@@ -180,7 +180,7 @@ def number_nodes(tree):
     i = 0
     while i in range(len(internal_lst)):
         item = internal_lst[i]
-        item.number = 1
+        item.number = i
         i += 1
 
 
