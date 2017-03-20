@@ -168,7 +168,7 @@ def get_codes(tree):
     {'a': '00', 'b': '0110', 'c': '0111', 'd': '010', 'e': '1'}
     """
     # todo
-     dict = {}
+    dict = {}
     bit = ""
     def generate_bits(tree, bit):
         """
