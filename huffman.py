@@ -113,19 +113,7 @@ def huffman_tree(freq_dict):
     >>> freq2 = {'A': 10, 'E': 15, 'I': 12, 'S': 3, 'T': 4, 'P': 13, '/n': 1}
     >>> t2 = huffman_tree(freq2)
     >>> print(t2)
-                            S
-                        None
-                            n
-                    None
-                        T
-                None
-                    A
-            None
-                E
-            P
-        None
-            I
-    <BLANKLINE>
+    test to see what tree looks like
     >>> freq_ = {1:64, 2:13, 3:22, 4:32, 5:103}
     >>> print(huffman_tree(freq_))
                     2
@@ -168,11 +156,16 @@ def get_codes(tree):
     >>> d == {3: "0", 2: "1"}
     True
     >>> freq_ = {1:64, 2:13, 3:22, 4:32, 5:103}
+    >>> print(huffman_tree(freq_))
+    what is this
     >>> get_codes(huffman_tree(freq_))
     {5: '0', 1: '10', 4: '110', 2: '1110', 3: '1111'}
     >>> freq2 = {'A': 10, 'E': 15, 'I': 12, 'S': 3, 'T': 4, 'P': 13, '/n': 1}
     >>> get_codes(huffman_tree(freq2))
-    {'A': '110', 'E': '10', 'I': '001', 'S': '11111', 'T': '1110', 'P': '01', '/n': '11110'}
+    {'A': '111', 'E': '10', 'I': '00', 'S': '11000', 'T': '1101', 'P': '01', '/n': '1101'}
+    >>> freq_dict = {'a': 4, 'b': 1, 'c': 2, 'd': 2, 'e': 10}
+    >>> get_codes(huffman_tree(freq_dict))
+    {'a': '00', 'b': '0110', 'c': '0111', 'd': '010', 'e': '1'}
     """
     # todo
      dict = {}
