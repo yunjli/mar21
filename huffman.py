@@ -116,9 +116,9 @@ def huffman_tree(freq_dict):
     test to see what tree looks like
     >>> freq_ = {1:64, 2:13, 3:22, 4:32, 5:103}
     >>> print(huffman_tree(freq_))
-                    2
-                None
                     3
+                None
+                    2
             None
                 4
         None
