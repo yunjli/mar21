@@ -134,16 +134,35 @@ def huffman_tree(freq_dict):
     nodes = []
 
     for item in f_sorted:
-        nodes.append(HuffmanNode(item[0]))
+        nodes.append((HuffmanNode(item[0]), item[1]))
+
+    def get_freq(freq_dict, node):
+        """
+        Return the frequency for given Huffman node.
+        """
+        if node.symbol in freq_dict.keys():
+            return freq_dict[node.symbol]
+        else:
+            return 0
+
+    def queue(nodes):
+        """
+        Return next item to pop
+        """
+        nodes.sort()
+        next = nodes[-1][0]
+        nodes.pop(-1)
+        return next
 
     while len(nodes) > 1:
         n = HuffmanNode(None)
-        n.right = nodes.pop(-1)
-        n.left = nodes.pop(-1)
-        nodes.append(n)
-        nodes.sort()
+        n.right = queue(nodes)
+        f_right = get_freq(freq_dict, n.right)
+        n.left = queue(nodes)
+        f_left = get_freq(freq_dict, n.left)
+        nodes.append((n, f_left + f_right))
 
-    return nodes[0]
+    return nodes[0][0]
 
 def get_codes(tree):
     """ Return a dict mapping symbols from tree rooted at HuffmanNode to codes.
