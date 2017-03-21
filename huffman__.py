@@ -116,13 +116,6 @@ def huffman_tree(freq_dict):
     >>> result2 = HuffmanNode(None, HuffmanNode(2), HuffmanNode(3))
     >>> t == result1 or t == result2
     True
-    >>> freq = {1:12, 2:33, 3:15, 4:8, 5:32}
-    >>> t = huffman_tree(freq)
-    >>> t1 = HuffmanNode(None, HuffmanNode(None, HuffmanNode(None, \
-    HuffmanNode(1), HuffmanNode(4)), HuffmanNode(3)), \
-    HuffmanNode(None, HuffmanNode(5), HuffmanNode(2)))
-    >>> t == t1
-    True
     """
     # todo |start from easiest statement|
     lst = []
@@ -408,7 +401,7 @@ HuffmanNode(None, HuffmanNode(10, None, None), HuffmanNode(12, None, None)))
         if not root_readnode.l_type and not root_readnode.r_type:
             return HuffmanNode(None, left, right)
         else:
-            if root_readnode.left_type:
+            if root_readnode.l_type:
                 left = generate_tree_general(node_lst, 0)
             if root_readnode.r_type:
                 right = generate_tree_general(node_lst, 0)
@@ -435,13 +428,14 @@ def generate_uncompressed(tree, text, size):
     for c in lst:
         a += c
     for c in range(0, size):
-        while tree.left is not None and tree.right is not None:
+        tree1 = tree
+        while tree1.left is not None and tree1.right is not None:
             if a[n] == "0":
-                tree = tree.left
+                tree1 = tree1.left
             else:
-                tree = tree.right
+                tree1 = tree1.right
             n += 1
-        byte += [tree.symbol]
+        byte += [tree1.symbol]
     return bytes(byte)
 
 
@@ -557,8 +551,8 @@ if __name__ == "__main__":
     import python_ta
     python_ta.check_all(config="huffman_pyta.txt")
     # TODO: Uncomment these when you have implemented all the functions
-    # import doctest
-    # doctest.testmod()
+    import doctest
+    doctest.testmod()
 
     import time
 
