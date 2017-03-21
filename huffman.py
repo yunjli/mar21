@@ -136,30 +136,16 @@ def huffman_tree(freq_dict):
     for item in f_sorted:
         nodes.append((HuffmanNode(item[0]), item[1]))
 
-    def get_freq(freq_dict, node):
-        """
-        Return the frequency for given Huffman node.
-        """
-        if node.symbol in freq_dict.keys():
-            return freq_dict[node.symbol]
-        else:
-            return 0
-
-    def queue(nodes):
-        """
-        Return next item to pop
-        """
-        nodes.sort()
-        next = nodes[-1][0]
-        nodes.pop(-1)
-        return next
-
     while len(nodes) > 1:
+        nodes = sorted(nodes, key=lambda x: x[-1])
+        nodes.reverse()
         n = HuffmanNode(None)
-        n.right = queue(nodes)
-        f_right = get_freq(freq_dict, n.right)
-        n.left = queue(nodes)
-        f_left = get_freq(freq_dict, n.left)
+        n.left = nodes[-1][0]
+        f_left = nodes[-1][1]
+        nodes.pop(-1)
+        n.right = nodes[-1][0]
+        f_right = nodes[-1][1]
+        nodes.pop(-1)
         nodes.append((n, f_left + f_right))
 
     return nodes[0][0]
