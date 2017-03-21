@@ -266,16 +266,13 @@ def generate_compressed(text, codes):
     string = ""
     for c in text:
         string += codes[c]
-    if len(string) < 8:
-        string += "0" * (8 - len(string))
-    while len(string) > 8:
-        new_str = "0b" + string[0:8]
-        string = string[7:-1]
-        byte += bytes([eval(new_str)])
-    if len(string):
-        curr_str = "0b" + string + "0" * (8 - len(string))
-        byte += bytes([eval(curr_str)])
+    new_str = [string[i: i+8] for i in range(0, len(string), 8)]
+    if len(new_str[-1]) < 8:
+        new_str[-1] += '0' * (8 - len(new_str[-1]))
+    for item in new_str:
+        byte += bytes([bits_to_byte(item)])
     return byte
+
 
 
 def tree_to_bytes(tree):
