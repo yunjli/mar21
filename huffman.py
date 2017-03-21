@@ -170,6 +170,12 @@ def get_codes(tree):
     codes = {}
 
     def preorder(tree, bit_str):
+        """
+        Preorder traversal for huffman tree
+        @param tree: HuffmanNode
+        @param bit_str: str
+        @rtype: dict
+        """
         if tree.left:
             preorder(tree.left, bit_str + "0")
         if tree.right:
