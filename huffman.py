@@ -262,6 +262,20 @@ def generate_compressed(text, codes):
     ['10111001', '10000000']
     """
     # todo
+    byte = bytes([])
+    string = ""
+    for c in text:
+        string += codes[c]
+    if len(string) < 8:
+        string += "0" * (8 - len(string))
+    while len(string) > 8:
+        new_str = "0b" + string[0:8]
+        string = string[7:-1]
+        byte += bytes([eval(new_str)])
+    if len(string):
+        curr_str = "0b" + string + "0" * (8 - len(string))
+        byte += bytes([eval(curr_str)])
+    return byte
 
 
 def tree_to_bytes(tree):
