@@ -205,13 +205,18 @@ def number_nodes(tree):
     >>> tree.number
     2
     """
-        # todo
-    internal_lst = inter_lst(tree)
-    i = 0
-    while i in range(len(internal_lst)):
-        item = internal_lst[i]
-        item.number = i
-        i += 1
+    # todo
+    i = [0]
+    def postorder(tree):
+        if tree is not None:
+            postorder(tree.left)
+            postorder(tree.right)
+            if tree.number is None:
+                tree.number = 0
+            if not tree.is_leaf():
+                tree.number = i[0]
+                i[0] += 1
+    postorder(tree)
 
 
 def avg_length(tree, freq_dict):
