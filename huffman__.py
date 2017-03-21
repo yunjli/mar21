@@ -145,66 +145,25 @@ def huffman_tree(freq_dict):
     >>> result2 = HuffmanNode(None, HuffmanNode(2), HuffmanNode(3))
     >>> t == result1 or t == result2
     True
+    >>> freq = {1:12, 2:33, 3:15, 4:8, 5:32}
+    >>> t = huffman_tree(freq)
+    >>> t1 = HuffmanNode(None, HuffmanNode(None, HuffmanNode(None, \
+    HuffmanNode(1), HuffmanNode(4)), HuffmanNode(3)), \
+    HuffmanNode(None, HuffmanNode(5), HuffmanNode(2)))
+    >>> t == t1
+    True
     """
     # todo |start from easiest statement|
-    result = HuffmanNode()
-    # useless when use while loop instead of recursion
-    if freq_dict == {}:
-        return result
-    elif len(freq_dict) == 1:
-        result.left = HuffmanNode(freq_dict.keys())
-        return result
-    else:
-        # basic idea: link two leaves
-        internal_dict = {}
-        internal_lst = []
-        good_node1, good_node2 = HuffmanNode(), HuffmanNode()
-        # make sure the tree is completly built
-        # Give a assumption: there are always paired nodes
-        # Is it possible the bottom node is not paired?
-        while freq_dict is not None or len(internal_lst) != 1:
-            new_list = list(freq_dict.values()) + list(internal_dict.values())
-            new_list.sort()
-            best = new_list[0]
-            lst1 = [item for item in freq_dict.keys()
-                    if freq_dict[item] == best] + \
-                   [item for item in internal_dict.keys()
-                    if internal_dict[item] == best]
-            if lst1[0] in freq_dict.keys():
-                good_node1 = HuffmanNode(lst1[0])
-                freq_dict.__delitem__(lst1[0])
-            else:
-                for c in internal_dict:
-                    if internal_dict[c] == best:
-                        for item in internal_lst:
-                            if item.__repr__() == c:
-                                good_node1 = item
-                                internal_lst.remove(item)
-                internal_dict.__delitem__(good_node1.__repr__())
-            # Already build the first node
-            # Under the assumption, find the best paired node
-            new_list = list(freq_dict.values()) + list(internal_dict.values())
-            best2 = new_list[0]
-            lst3 = [item for item in freq_dict.keys()
-                    if freq_dict[item] == best2] + \
-                   [item for item in internal_dict.keys()
-                    if internal_dict[item] == best2]
-            if lst3[0] in freq_dict.keys():
-                good_node2 = HuffmanNode(lst3[0])
-                freq_dict.__delitem__(lst3[0])
-            else:
-                for c in internal_dict:
-                    if internal_dict[c] == best2:
-                        for item in internal_lst:
-                            if item.__repr__() == c:
-                                good_node2 = item
-                                internal_lst.remove(item)
-                internal_dict.__delitem__(good_node2.__repr__())
-            inter_node = HuffmanNode(None, good_node1, good_node2)
-            internal_dict[inter_node.__repr__()] = best + best2
-            internal_lst.append(inter_node)
-            for c in internal_lst:
-                return c
+    lst = []
+    for i in freq_dict:
+        lst.append([freq_dict[i], HuffmanNode(i)])
+    lst.sort()
+    while len(lst) > 1:
+        m = lst.pop(0)
+        n = lst.pop(0)
+        lst.append([m[0] + n[0], HuffmanNode(None, m[1], n[1])])
+        lst.sort()
+    return lst[0][1]
 
 
 def get_codes(tree):
@@ -217,23 +176,31 @@ def get_codes(tree):
     >>> d = get_codes(tree)
     >>> d == {3: "0", 2: "1"}
     True
+    >>> tree = HuffmanNode(None, HuffmanNode(None, HuffmanNode(None, \
+    HuffmanNode(1), HuffmanNode(4)), HuffmanNode(3)), \
+    HuffmanNode(None, HuffmanNode(5), HuffmanNode(2)))
+    >>> get_codes(tree)
+    {1: "000", 2:"11", 3:"01", 4:"001", 5:"10"}
     """
-    # todo
-    d = {}
-    if not tree.symbol:
+    # todo **
+    codes = {}
+
+    def preorder(tree, bit_str):
+        """
+        Preorder traversal for huffman tree
+        @param tree: HuffmanNode
+        @param bit_str: str
+        @rtype: dict
+        """
         if tree.left:
-            dic1 = get_codes(tree.left)
-            for item in dic1.keys():
-                dic1[item] = "0" + dic1[item]
-            d.update(dic1)
+            preorder(tree.left, bit_str + "0")
         if tree.right:
-            dic2 = get_codes(tree.right)
-            for item in dic2.keys():
-                dic2[item] = "1" + dic2[item]
-            d.update(dic2)
-    else:
-        d[tree.symbol] = ""
-    return d
+            preorder(tree.right, bit_str + "1")
+        if tree.is_leaf():
+            codes[tree.symbol] = bit_str
+
+    preorder(tree, "")
+    return codes
 
 
 def number_nodes(tree):
@@ -305,20 +272,15 @@ def generate_compressed(text, codes):
     ['10111001', '10000000']
     """
     # todo
-    byte = bytes([])
+    byte = []
     string = ""
     for c in text:
         string += codes[c]
-    if len(string) < 8:
-        string += "0" * (8 - len(string))
-    while len(string) > 8:
-        new_str = "0b" + string[0:8]
-        string = string[7:-1]
-        byte += bytes([eval(new_str)])
-    if len(string):
-        curr_str = "0b" + string + "0" * (8 - len(string))
-        byte += bytes([eval(curr_str)])
-    return byte
+    string += "0" * (8 - len(string) % 8)
+    num = int(len(string) / 8)
+    for k in range(0, num):
+        byte.append(bits_to_byte(string[k*8:(k+1)*8]))
+    return bytes(byte)
 
 
 def tree_to_bytes(tree):
@@ -412,12 +374,6 @@ def generate_tree_general(node_lst, root_index):
     @param int root_index: index in the node list
     @rtype: HuffmanNode
 
-    # NOT postorder
-    # How to create a general method to get a unique solution?
-    # Is it possible that there is a case we only have the root
-    node and one leaf?-->read node always has data value
-    # If it is a leaf-->type number is 0, type data is the symbol value
-    # If it is a internal node-->type number is 1, type data is the number value
     >>> lst = [ReadNode(0, 5, 0, 7), ReadNode(0, 10, 0, 12), \
     ReadNode(1, 1, 1, 0)]
     >>> generate_tree_general(lst, 2)
@@ -429,18 +385,14 @@ HuffmanNode(None, HuffmanNode(5, None, None), HuffmanNode(7, None, None)))
     root_readnode = node_lst[root_index]
     node_lst.remove(root_readnode)
     if not root_readnode.l_type or not root_readnode.r_type:
+        left = HuffmanNode(root_readnode.l_data)
+        right = HuffmanNode(root_readnode.r_data)
         if not root_readnode.l_type and not root_readnode.r_type:
-            left = HuffmanNode(root_readnode.l_data)
-            right = HuffmanNode(root_readnode.r_data)
             return HuffmanNode(None, left, right)
         else:
-            if not root_readnode.left_type:
-                left = HuffmanNode(root_readnode.l_data)
-            else:
+            if root_readnode.l_type:
                 left = generate_tree_general(node_lst, 0)
-            if not root_readnode.r_type:
-                right = HuffmanNode(root_readnode.l_data)
-            else:
+            if root_readnode.r_type:
                 right = generate_tree_general(node_lst, 0)
             return HuffmanNode(None, left, right)
     else:
@@ -473,18 +425,14 @@ HuffmanNode(None, HuffmanNode(10, None, None), HuffmanNode(12, None, None)))
     root_readnode = node_lst[root_index]
     node_lst.remove(root_readnode)
     if not root_readnode.l_type or not root_readnode.r_type:
+        left = HuffmanNode(root_readnode.l_data)
+        right = HuffmanNode(root_readnode.r_data)
         if not root_readnode.l_type and not root_readnode.r_type:
-            left = HuffmanNode(root_readnode.l_data)
-            right = HuffmanNode(root_readnode.r_data)
             return HuffmanNode(None, left, right)
         else:
-            if not root_readnode.left_type:
-                left = HuffmanNode(root_readnode.l_data)
-            else:
+            if root_readnode.left_type:
                 left = generate_tree_general(node_lst, 0)
-            if not root_readnode.r_type:
-                right = HuffmanNode(root_readnode.l_data)
-            else:
+            if root_readnode.r_type:
                 right = generate_tree_general(node_lst, 0)
             return HuffmanNode(None, left, right)
     else:
@@ -502,6 +450,21 @@ def generate_uncompressed(tree, text, size):
     @rtype: bytes
     """
     # todo
+    byte = []
+    a = ""
+    n = 0
+    lst = [byte_to_bits(item) for item in text]
+    for c in lst:
+        a += c
+    for c in range(0, size):
+        while tree.left is not None and tree.right is not None:
+            if a[n] == "0":
+                tree = tree.left
+            else:
+                tree = tree.right
+            n += 1
+        byte += [tree.symbol]
+    return bytes(byte)
 
 
 def bytes_to_nodes(buf):
@@ -576,6 +539,41 @@ def improve_tree(tree, freq_dict):
     2.31
     """
     # todo
+    def check_value(t, value):
+        if t.symbol:
+            return t.symbol == value
+        else:
+            return check_value(t.left, value) or \
+                   check_value(t.right, value)
+
+    def height(t, value):
+        if value == t.symbol:
+            return 1
+        elif check_value(t.left, value):
+            return 1 + height(t.left, value)
+        else:
+            return 1 + height(t.right, value)
+
+    def contained_tree(t, value):
+        if t.symbol == value:
+            return t
+        elif t.left is not None and t.right is not None:
+                if check_value(t.left, value):
+                    return contained_tree(t.left, value)
+                elif check_value(t.right, value):
+                    return contained_tree(t.right, value)
+
+    freq_height = {}
+    for c in freq_dict:
+        freq_height[c] = [freq_dict[c], height(tree, c)]
+    for a in freq_height:
+        for b in freq_height:
+            if freq_height[a][0] >= freq_height[b][0] and \
+                            freq_height[a][1] >= freq_height[b][1]:
+                tree1 = contained_tree(tree, a)
+                tree2 = contained_tree(tree, b)
+                tree1.symbol, tree2.symbol = tree2.symbol, tree1.symbol
+
 
 if __name__ == "__main__":
     import python_ta
