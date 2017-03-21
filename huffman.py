@@ -167,24 +167,18 @@ def get_codes(tree):
     {'a': '00', 'b': '0110', 'c': '0111', 'd': '010', 'e': '1'}
     """
     # todo
-    dict = {}
-    bit = ""
-    def generate_bits(tree, bit):
-        """
-        Generate bits in a preorder format, with adding "0" to
-        every left branch, and "1" to every right branch to dict value.
-        @param tree: a tree rooted at HuffmanNode
-        @param bit: int
-        @rtype None
-        """
+    codes = {}
+
+    def preorder(tree, bit_str):
         if tree.left:
-            generate_bits(tree.left, bit + "0")
+            preorder(tree.left, bit_str + "0")
         if tree.right:
-            generate_bits(tree.right, bit + "1")
+            preorder(tree.right, bit_str + "1")
         if tree.is_leaf():
-            dict[tree.symbol] = bit
-    generate_bits(tree, bit)
-    return dict
+            codes[tree.symbol] = bit_str
+
+    preorder(tree, "")
+    return codes
 
 
 def number_nodes(tree):
