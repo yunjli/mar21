@@ -113,19 +113,13 @@ def huffman_tree(freq_dict):
     >>> freq2 = {'A': 10, 'E': 15, 'I': 12, 'S': 3, 'T': 4, 'P': 13, '/n': 1}
     >>> t2 = huffman_tree(freq2)
     >>> print(t2)
-    test to see what tree looks like
+    test
     >>> freq_ = {1:64, 2:13, 3:22, 4:32, 5:103}
     >>> print(huffman_tree(freq_))
-                    3
-                None
-                    2
-            None
-                4
-        None
-            1
-    None
-        5
-    <BLANKLINE>
+    test
+    >>> freq_dict = {'a': 4, 'b': 1, 'c': 2, 'd': 2, 'e': 10}
+    >>> print(huffman_tree(freq_dict))
+    test
     """
     # put dictionary into list of tuples. tuple = (value, key)
     # reverse sort so items with lowest frequency is at bottom of tree
