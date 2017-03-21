@@ -56,35 +56,6 @@ def bits_to_byte(bits):
 
 # ====================
 # Helper functions for HuffmanTree
-def inter_lst(tree):
-    """Return the list of internal nodes in postorder traversal.
-
-     @param HuffmanNode tree: this HuffmanNode
-     @rtype: list[HuffmanNode]
-
-     >>> tree = HuffmanNode(None, HuffmanNode(3), HuffmanNode(2))
-     >>> number_nodes(tree)
-     >>> len(inter_lst(tree))
-     1
-     >>> left = HuffmanNode(None, HuffmanNode(3), HuffmanNode(2))
-     >>> right = HuffmanNode(5)
-     >>> tree = HuffmanNode(None, left, right)
-     >>> number_nodes(tree)
-     >>> len(inter_lst(tree))
-     2
-     """
-    lst = []
-    if not tree.symbol:
-        if tree.left.symbol and tree.right.symbol:
-            lst.append(tree)
-        else:
-            if not tree.left.symbol:
-                lst += inter_lst(tree.left)
-            if not tree.right.symbol:
-                lst += inter_lst(tree.right)
-            lst.append(tree)
-        return lst
-
 
 def full_lst(tree):
     """Return the list of all nodes in postorder traversal.
@@ -222,12 +193,19 @@ def number_nodes(tree):
     2
     """
     # todo
-    internal_lst = inter_lst(tree)
-    i = 0
-    while i in range(len(internal_lst)):
-        item = internal_lst[i]
-        item.number = i
-        i += 1
+    i = [0]
+
+    def postorder(t):
+        if t is not None:
+            postorder(t.left)
+            postorder(t.right)
+            if t.number is None:
+                t.number = 0
+            if not t.is_leaf():
+                t.number = i[0]
+                i[0] += 1
+
+    postorder(tree)
 
 
 def avg_length(tree, freq_dict):
