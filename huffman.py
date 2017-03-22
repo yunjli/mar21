@@ -144,7 +144,7 @@ def get_codes(tree):
     HuffmanNode(1), HuffmanNode(4)), HuffmanNode(3)), \
     HuffmanNode(None, HuffmanNode(5), HuffmanNode(2)))
     >>> get_codes(tree)
-    {1: "000", 2:"11", 3:"01", 4:"001", 5:"10"}
+    {1: '000', 2: '11', 3: '01', 4: '001', 5: '10'}
     """
     # todo **
     codes = {}
@@ -493,6 +493,60 @@ def uncompress(in_file, out_file):
 # ====================
 # Other functions
 
+def get_height_helper(root, value, height):
+    '''
+
+    :param root: root node
+    :param value: target value
+    :param height: current height back to top node
+    :return: height to root if value is found
+    '''
+    if root.symbol == value:
+        return height
+
+    # not found
+    if root.is_leaf():
+        return -1
+
+    left_height = get_height_helper(root.left, value, height + 1)
+    right_height = get_height_helper(root.right, value, height + 1)
+
+    return max(left_height, right_height)
+
+
+def get_height(root, value):
+    ''' Search for the value in the tree rooted at node t,
+    return the height from the node found to node t.
+
+    :param root: root node
+    :param value: the target value
+    :return: height from t to value
+    '''
+    return get_height_helper(root, value, 1)
+
+
+def contained_tree(root, value):
+    ''' Find the node that has the value
+
+    :param root: root node
+    :param value: the target value
+    :return: node that has value
+    '''
+    if root.symbol == value:
+        return root
+
+    if root.is_leaf():
+        return None
+
+    left_result = contained_tree(root.left, value)
+    right_result = contained_tree(root.right, value)
+
+    if (left_result != None):
+        return left_result
+    else:
+        return right_result
+
+
 def improve_tree(tree, freq_dict):
     """ Improve the tree as much as possible, without changing its shape,
     by swapping nodes. The improvements are with respect to freq_dict.
@@ -511,33 +565,11 @@ def improve_tree(tree, freq_dict):
     2.31
     """
     # todo
-    def check_value(t, value):
-        if t.symbol:
-            return t.symbol == value
-        else:
-            return check_value(t.left, value) or \
-                   check_value(t.right, value)
-
-    def height(t, value):
-        if value == t.symbol:
-            return 1
-        elif check_value(t.left, value):
-            return 1 + height(t.left, value)
-        else:
-            return 1 + height(t.right, value)
-
-    def contained_tree(t, value):
-        if t.symbol == value:
-            return t
-        elif t.left is not None and t.right is not None:
-                if check_value(t.left, value):
-                    return contained_tree(t.left, value)
-                elif check_value(t.right, value):
-                    return contained_tree(t.right, value)
-
     freq_height = {}
-    for c in freq_dict:
-        freq_height[c] = [freq_dict[c], height(tree, c)]
+
+    for value in freq_dict:
+        freq_height[value] = [freq_dict[value], get_height(tree, value)]
+
     for a in freq_height:
         for b in freq_height:
             if freq_height[a][0] >= freq_height[b][0] and \
@@ -548,8 +580,8 @@ def improve_tree(tree, freq_dict):
 
 
 if __name__ == "__main__":
-    import python_ta
-    python_ta.check_all(config="huffman_pyta.txt")
+    #import python_ta
+    #python_ta.check_all(config="huffman_pyta.txt")
     # TODO: Uncomment these when you have implemented all the functions
     import doctest
     doctest.testmod()
